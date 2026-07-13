@@ -15,8 +15,6 @@ public class Ctrl2Controller : ControllerBase
 
     private readonly AppDbContext db;
 
-    private static readonly string connStr = "Data Source=app.db;Password=admin123";
-
     public Ctrl2Controller(AppDbContext context)
     {
         db = context;
@@ -91,12 +89,12 @@ public class Ctrl2Controller : ControllerBase
     }
 
     [HttpGet("byname")]
-    public IActionResult Handle(string q)
+    public async Task<IActionResult> Handle(string q)
     {
-        var sql = "SELECT * FROM Users WHERE FirstName LIKE '%" + q + "%'";
-        var result = db.Users.FromSqlRaw(sql).ToListAsync().Result;
-
-        Console.WriteLine("query eseguita: " + sql);
+        var pattern = $"%{q}%";
+        var result = await db.Users
+            .Where(u => EF.Functions.Like(u.FirstName, pattern))
+            .ToListAsync();
 
         return Ok(result);
     }
