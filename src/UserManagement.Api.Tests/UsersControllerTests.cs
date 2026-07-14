@@ -26,7 +26,9 @@ public class UsersControllerTests : IClassFixture<CustomWebApplicationFactory>
     {
         var response = await _client.PostAsJsonAsync("/api/v1/users", NewUser($"{Guid.NewGuid()}@example.com"));
 
-        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+        //Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+        // Simulo fallimento test
+        Assert.NotEqual(HttpStatusCode.Created, response.StatusCode);
         var created = await response.Content.ReadFromJsonAsync<UserDto>();
         Assert.NotNull(created);
         Assert.NotEqual(Guid.Empty, created!.Id);
